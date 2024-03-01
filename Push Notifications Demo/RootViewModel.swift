@@ -8,6 +8,10 @@ class RootViewModel  {
     var status: UNAuthorizationStatus = .notDetermined
     var requestType: Int = 0
 
+    var notificationTitle: String = ""
+    var notificationSubtitle: String = ""
+    var notificationBody: String = ""
+
     init() {
         Task { await checkStatus() }
     }
@@ -28,5 +32,14 @@ class RootViewModel  {
     func checkStatus() async {
         status = await UNUserNotificationCenter.current()
             .notificationSettings().authorizationStatus
+    }
+
+    @MainActor
+    func notificationReceived(with payload: [AnyHashable : Any]) {
+        guard let aps = payload["aps"] as? [AnyHashable : Any],
+              let alert = aps["alert"] as? [AnyHashable : Any] else { return }
+        notificationTitle = alert["title"] as? String ?? ""
+        notificationSubtitle = alert["subtitle"] as? String ?? ""
+        notificationBody = alert["body"] as? String ?? ""
     }
 }

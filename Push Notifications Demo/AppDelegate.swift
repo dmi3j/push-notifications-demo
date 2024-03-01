@@ -40,8 +40,11 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     ) async -> UNNotificationPresentationOptions {
         let userInfo = notification.request.content.userInfo
         print("\(#function)\n\(userInfo)")
-        // return empty list if no UI needed for notification
-        return [.sound, .banner, .badge, .list]
+        rootViewModel.notificationReceived(with: userInfo)
+        /// return an array with element to display
+        // return [.sound, .banner, .badge, .list]
+        /// return empty list if no UI needed for notification
+        return []
     }
 
     func userNotificationCenter(
@@ -50,5 +53,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     ) async {
         let userInfo = response.notification.request.content.userInfo
         print("\(#function)\n\(userInfo)")
+        rootViewModel.notificationReceived(with: userInfo)
     }
 }

@@ -43,6 +43,27 @@ struct RootView: View {
             .padding()
 
             Spacer()
+
+            VStack {
+                HStack {
+                    Text("Title:").bold()
+                    Text(viewModel.notificationTitle)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                HStack {
+                    Text("Subtitle:").bold()
+                    Text(viewModel.notificationSubtitle)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                HStack {
+                    Text("Body:").bold()
+                    Text(viewModel.notificationBody)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding()
+
+            Spacer()
         }
     }
 }
