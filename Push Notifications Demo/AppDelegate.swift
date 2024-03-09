@@ -42,9 +42,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         print("\(#function)\n\(userInfo)")
         rootViewModel.notificationReceived(with: userInfo)
         /// return an array with element to display
-        // return [.sound, .banner, .badge, .list]
+        return [.sound, .banner, .badge, .list]
         /// return empty list if no UI needed for notification
-        return []
+        // return []
     }
 
     func userNotificationCenter(
@@ -54,5 +54,17 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let userInfo = response.notification.request.content.userInfo
         print("\(#function)\n\(userInfo)")
         rootViewModel.notificationReceived(with: userInfo)
+
+        // Perform the task associated with the action
+        switch response.actionIdentifier {
+            case "ACCEPT_PAYMENT":
+                // proceed with payment accept
+                break
+            case "DECLINE_PAYMENT":
+                // proceed with payment decline
+                break
+            default:
+                break
+        }
     }
 }

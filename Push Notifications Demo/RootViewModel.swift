@@ -14,6 +14,32 @@ class RootViewModel  {
 
     init() {
         Task { await checkStatus() }
+        registerCustomActions()
+    }
+
+    func registerCustomActions() {
+        // Define the custom actions
+        let acceptAction = UNNotificationAction(
+            identifier: "ACCEPT_PAYMENT",
+            title: "Accept",
+            options: [.authenticationRequired]
+        )
+        let declineAction = UNNotificationAction(
+            identifier: "DECLINE_PAYMENT",
+            title: "Decline",
+            options: [.destructive]
+        )
+        // Define the notification type
+        let incomingPaymentCategory = UNNotificationCategory(
+            identifier: "PAY_IN",
+            actions: [acceptAction, declineAction],
+            intentIdentifiers: [],
+            hiddenPreviewsBodyPlaceholder: "%u incoming payments",
+            options: .customDismissAction
+        )
+        // Register the notification type
+        let notificationCenter = UNUserNotificationCenter.current()
+        notificationCenter.setNotificationCategories([incomingPaymentCategory])
     }
 
     func requestPermission() async {
@@ -41,5 +67,9 @@ class RootViewModel  {
         notificationTitle = alert["title"] as? String ?? ""
         notificationSubtitle = alert["subtitle"] as? String ?? ""
         notificationBody = alert["body"] as? String ?? ""
+
+        if let customID = payload["my_id"] as? String {
+            debugPrint("My custom ID recevied \(customID)")
+        }
     }
 }
