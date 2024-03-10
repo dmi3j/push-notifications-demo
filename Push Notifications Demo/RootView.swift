@@ -47,6 +47,13 @@ struct RootView: View {
             Spacer()
 
             VStack {
+                Button("Send local push", systemImage: "paperplane") {
+                    Task { await viewModel.sendLocalPush() }
+                }
+                .padding()
+            }
+
+            VStack {
                 HStack {
                     Text("Title:").bold()
                     Text(viewModel.notificationTitle)

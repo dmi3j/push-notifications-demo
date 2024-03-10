@@ -3,6 +3,7 @@
 import Foundation
 import UserNotifications
 import FirebaseMessaging
+import CoreLocation
 
 @Observable
 class RootViewModel  {
@@ -94,6 +95,71 @@ class RootViewModel  {
     func unsubscribeFromTopic() async {
         do {
             try await Messaging.messaging().unsubscribe(fromTopic: "payments")
+        } catch {
+            print("\(#function)\n\(error)")
+        }
+    }
+
+    func sendLocalPush() async {
+        let notificationCenter = UNUserNotificationCenter.current()
+        let requests = await notificationCenter.pendingNotificationRequests()
+        print("\(#function)\nThere are [\(requests.count)] scheduled notifications")
+
+        /*
+        // delete scheduled notification
+         notificationCenter.removePendingNotificationRequests(
+            withIdentifiers: ["<notification_id>"]
+         )
+         */
+
+        /*
+        // date/time trigger
+        var date = DateComponents()
+        date.hour = 10
+        date.minute = 30
+        let trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
+         */
+
+
+        // interval trigger; fire in 10 sec
+        let trigger = UNTimeIntervalNotificationTrigger(
+            timeInterval: (10),
+            repeats: false
+        )
+
+        /*
+        // location trigger
+        let center = CLLocationCoordinate2D(
+            latitude: 56.95342222403206,
+            longitude: 24.100736051500316
+        )
+        let region = CLCircularRegion(
+            center: center,
+            radius: 100.0,
+            identifier: "Headquarters"
+        )
+        region.notifyOnEntry = true
+        region.notifyOnExit = false
+        let trigger = UNLocationNotificationTrigger(
+            region: region,
+            repeats: false
+        )
+        */
+
+        let content = UNMutableNotificationContent()
+        content.title = "Incoming payment"
+        content.body = "Check you balance"
+        content.userInfo = ["category": "PAY_IN"]
+
+        let uuidString = UUID().uuidString
+        let request = UNNotificationRequest(
+            identifier: uuidString,
+            content: content,
+            trigger: trigger
+        )
+
+        do {
+            try await notificationCenter.add(request)
         } catch {
             print("\(#function)\n\(error)")
         }
