@@ -1,6 +1,8 @@
 //  Copyright © 2024 Dmitrijs Beloborodovs. All rights reserved.
 
 import UIKit
+import FirebaseCore
+import FirebaseMessaging
 
 class AppDelegate: NSObject, UIApplicationDelegate {
 
@@ -11,7 +13,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         print("\(#function)\n\(launchOptions ?? [:])")
+
         UNUserNotificationCenter.current().delegate = self
+
+        // Note: intialize firebase before registering to notification
+        FirebaseApp.configure()
+
+        Messaging.messaging().delegate = self
+
         application.registerForRemoteNotifications()
         return true
     }
@@ -21,6 +30,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
         print("\(#function)\n[\(deviceToken.map { String(format: "%02.2hhx", $0) }.joined())]")
+        Messaging.messaging().apnsToken = deviceToken
     }
 
     func application(
@@ -76,5 +86,15 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             default:
                 break
         }
+    }
+}
+
+// MARK: - MessagingDelegate
+extension AppDelegate: MessagingDelegate {
+
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        print("\(#function)\nFirebase registration token: \(String(describing: fcmToken))")
+        // TODO: If necessary send token to application server.
+        // Note: This callback is fired at each app startup and whenever a new token is generated.
     }
 }

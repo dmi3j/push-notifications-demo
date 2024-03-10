@@ -2,6 +2,7 @@
 
 import Foundation
 import UserNotifications
+import FirebaseMessaging
 
 @Observable
 class RootViewModel  {
@@ -80,6 +81,22 @@ class RootViewModel  {
         clearFields()
 
         customAction = userInfo["my_id"] as? String ?? ""
+    }
+
+    func subscribeToTopic() async {
+        do {
+            try await Messaging.messaging().subscribe(toTopic: "payments")
+        } catch {
+            print("\(#function)\n\(error)")
+        }
+    }
+
+    func unsubscribeFromTopic() async {
+        do {
+            try await Messaging.messaging().unsubscribe(fromTopic: "payments")
+        } catch {
+            print("\(#function)\n\(error)")
+        }
     }
 }
 

@@ -7,40 +7,42 @@ struct RootView: View {
 
     var body: some View {
         VStack {
-            HStack {
-                Text("Push notifications status:")
-                Spacer()
-                VStack {
-                    Text("notDetermined")
-                        .bold(viewModel.status == .notDetermined)
-                    Text("denied")
-                        .bold(viewModel.status == .denied)
-                    Text("authorized")
-                        .bold(viewModel.status == .authorized)
-                    Text("provisional")
-                        .bold(viewModel.status == .provisional)
-                    Text("ephemeral")
-                        .bold(viewModel.status == .ephemeral)
+            VStack {
+                HStack {
+                    Text("Push notifications status:")
+                    Spacer()
+                    VStack {
+                        Text("notDetermined")
+                            .bold(viewModel.status == .notDetermined)
+                        Text("denied")
+                            .bold(viewModel.status == .denied)
+                        Text("authorized")
+                            .bold(viewModel.status == .authorized)
+                        Text("provisional")
+                            .bold(viewModel.status == .provisional)
+                        Text("ephemeral")
+                            .bold(viewModel.status == .ephemeral)
+                    }
                 }
-            }
-            .padding()
+                .padding()
 
-            Button("Check status", systemImage: "arrow.clockwise") {
-                Task { await viewModel.checkStatus() }
-            }
-            .padding()
+                Button("Check status", systemImage: "arrow.clockwise") {
+                    Task { await viewModel.checkStatus() }
+                }
+                .padding()
 
-            Picker("", selection: $viewModel.requestType) {
-                Text("Explicit").tag(0)
-                Text("Provisional").tag(1)
-            }
-            .pickerStyle(.segmented)
-            .padding()
+                Picker("", selection: $viewModel.requestType) {
+                    Text("Explicit").tag(0)
+                    Text("Provisional").tag(1)
+                }
+                .pickerStyle(.segmented)
+                .padding()
 
-            Button("Request permission", systemImage: "gear.badge.questionmark") {
-                Task { await viewModel.requestPermission() }
+                Button("Request permission", systemImage: "gear.badge.questionmark") {
+                    Task { await viewModel.requestPermission() }
+                }
+                .padding()
             }
-            .padding()
 
             Spacer()
 
@@ -69,6 +71,18 @@ struct RootView: View {
             .padding()
 
             Spacer()
+
+            VStack {
+                Button("Subscribe to topic", systemImage: "bell") {
+                    Task { await viewModel.subscribeToTopic() }
+                }
+                .padding()
+
+                Button("Unsubscribe from topic", systemImage: "bell.slash") {
+                    Task { await viewModel.unsubscribeFromTopic() }
+                }
+                .padding()
+            }
         }
     }
 }
