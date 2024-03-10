@@ -49,6 +49,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // perform any task in less than 30 sec
         return .newData
     }
+
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        openSettingsFor notification: UNNotification?
+    ) {
+        let userInfo = notification?.request.content.userInfo ?? [:]
+        print("\(#function)\n\(userInfo)")
+        rootViewModel.displayConfigSettings()
+    }
 }
 
 // MARK: - UNUserNotificationCenterDelegate

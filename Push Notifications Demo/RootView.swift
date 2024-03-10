@@ -4,6 +4,7 @@ import SwiftUI
 
 struct RootView: View {
     @Bindable var viewModel: RootViewModel
+    @State private var showIncoming = true
 
     var body: some View {
         VStack {
@@ -54,6 +55,14 @@ struct RootView: View {
             }
 
             VStack {
+                Button("Perform network request", systemImage: "network") {
+                    Task { await viewModel.performDummyNetworkRequest() }
+                }
+                .padding()
+                Text(viewModel.networkStatus)
+            }
+
+            VStack {
                 HStack {
                     Text("Title:").bold()
                     Text(viewModel.notificationTitle)
@@ -90,6 +99,12 @@ struct RootView: View {
                 }
                 .padding()
             }
+        }
+        .sheet(isPresented: $viewModel.isPresentingSettings) {
+            Form {
+                Toggle("Enable incoming payments notifications", isOn: $showIncoming)
+            }
+            .presentationDetents([.medium])
         }
     }
 }

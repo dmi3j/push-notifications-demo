@@ -15,6 +15,9 @@ class RootViewModel  {
     var notificationBody: String = ""
     var customAction: String = ""
 
+    var isPresentingSettings = false
+    var networkStatus = "🔘"
+
     init() {
         Task { await checkStatus() }
         registerCustomActions()
@@ -46,8 +49,8 @@ class RootViewModel  {
     }
 
     func requestPermission() async {
-        let opt1: UNAuthorizationOptions = [.alert, .badge, .sound]
-        let opt2: UNAuthorizationOptions = [.provisional]
+        let opt1: UNAuthorizationOptions = [.alert, .badge, .sound, .providesAppNotificationSettings]
+        let opt2: UNAuthorizationOptions = [.provisional, .providesAppNotificationSettings]
         do {
             try await UNUserNotificationCenter.current()
                 .requestAuthorization(options: requestType == 0 ? opt1 : opt2)
@@ -163,6 +166,28 @@ class RootViewModel  {
         } catch {
             print("\(#function)\n\(error)")
         }
+    }
+
+    @MainActor
+    func displayConfigSettings() {
+        isPresentingSettings = true
+    }
+
+    @MainActor
+    func performDummyNetworkRequest() {
+        let url = URL(string: "https://www.google.com")!
+        var request = URLRequest(url: url)
+        let task = URLSession.shared.dataTask(with: url) { data, _, error in
+            if let error {
+                print("No network, error = \(error)")
+                self.networkStatus = "🔴"
+            } else {
+                print("Network is accessible")
+                print(data)
+                self.networkStatus = "🟢"
+            }
+        }
+        task.resume()
     }
 }
 
