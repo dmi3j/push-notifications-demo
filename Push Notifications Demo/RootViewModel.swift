@@ -11,6 +11,7 @@ class RootViewModel  {
     var notificationTitle: String = ""
     var notificationSubtitle: String = ""
     var notificationBody: String = ""
+    var customAction: String = ""
 
     init() {
         Task { await checkStatus() }
@@ -62,6 +63,7 @@ class RootViewModel  {
 
     @MainActor
     func notificationReceived(with payload: [AnyHashable : Any]) {
+        clearFields()
         guard let aps = payload["aps"] as? [AnyHashable : Any],
               let alert = aps["alert"] as? [AnyHashable : Any] else { return }
         notificationTitle = alert["title"] as? String ?? ""
@@ -71,5 +73,22 @@ class RootViewModel  {
         if let customID = payload["my_id"] as? String {
             debugPrint("My custom ID recevied \(customID)")
         }
+    }
+
+    @MainActor 
+    func backgroundTask(with userInfo: [AnyHashable : Any]) {
+        clearFields()
+
+        customAction = userInfo["my_id"] as? String ?? ""
+    }
+}
+
+private extension RootViewModel {
+
+    func clearFields() {
+        notificationTitle = ""
+        notificationSubtitle = ""
+        notificationBody = ""
+        customAction = ""
     }
 }

@@ -29,6 +29,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     ) {
         print("\(#function)\n\(error)")
     }
+
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable : Any]
+    ) async -> UIBackgroundFetchResult {
+        print("\(#function)\n\(userInfo)")
+        rootViewModel.backgroundTask(with: userInfo)
+        // perform any task in less than 30 sec
+        return .newData
+    }
 }
 
 // MARK: - UNUserNotificationCenterDelegate

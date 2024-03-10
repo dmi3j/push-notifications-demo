@@ -60,6 +60,11 @@ struct RootView: View {
                     Text(viewModel.notificationBody)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+                HStack {
+                    Text("Custom actions:").bold()
+                    Text(viewModel.customAction)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding()
 
